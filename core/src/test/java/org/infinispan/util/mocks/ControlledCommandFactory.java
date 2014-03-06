@@ -20,6 +20,7 @@ import org.infinispan.commands.read.ReduceCommand;
 import org.infinispan.commands.read.SizeCommand;
 import org.infinispan.commands.read.ValuesCommand;
 import org.infinispan.commands.remote.ClusteredGetCommand;
+import org.infinispan.commands.remote.GetKeysInGroup;
 import org.infinispan.commands.remote.MultipleRpcCommand;
 import org.infinispan.commands.remote.SingleRpcCommand;
 import org.infinispan.commands.remote.recovery.CompleteTransactionCommand;
@@ -359,5 +360,10 @@ public class ControlledCommandFactory implements CommandsFactory {
    public <K, C> EntryResponseCommand buildEntryResponseCommand(UUID identifier, Set<Integer> completedSegments,
                                                                 Set<Integer> inDoubtSegments, Collection<Map.Entry<K, C>> values) {
       return actual.buildEntryResponseCommand(identifier, completedSegments, inDoubtSegments, values);
+   }
+
+   @Override
+   public GetKeysInGroup buildGetKeysInGroupCommand(Object group) {
+      return actual.buildGetKeysInGroupCommand(group);
    }
 }

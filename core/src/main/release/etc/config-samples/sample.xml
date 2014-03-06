@@ -183,6 +183,41 @@
       <state-transfer enabled="false" timeout="240000" chunk-size="10000" />
 
       <!--
+         This element specifies that the cache is clustered.
+         modes supported: distribution (d), replication (r) or invalidation (i).
+
+         http://community.jboss.org/wiki/Clusteringmodes
+      -->
+      <clustering mode="replication">
+
+         <!--
+            Configures how state is transferred between the nodes
+         -->
+         <stateTransfer
+            timeout="240000"
+            fetchInMemoryState="false"
+            chunkSize="10000"
+            awaitInitialTransfer="false"
+         />
+
+         <!--
+            Network calls are synchronous.
+         -->
+         <sync replTimeout="20000"/>
+
+         <!--
+            Uncomment this for async replication.
+         -->
+         <!--
+         <async
+            useReplQueue="true"
+            replQueueInterval="10000"
+            replQueueMaxElements="500"
+         />
+         -->
+      </clustering>
+
+      <!--
        When x-site replication is used, configures the site and caches where this (default) cache backs up the data.
       -->
       <!--

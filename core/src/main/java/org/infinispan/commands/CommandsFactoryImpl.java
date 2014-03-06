@@ -1,7 +1,9 @@
 package org.infinispan.commands;
 
 import org.infinispan.Cache;
+import org.infinispan.commands.remote.GetKeysInGroup;
 import org.infinispan.context.InvocationContextFactory;
+import org.infinispan.distribution.group.GroupManager;
 import org.infinispan.iteration.impl.EntryRequestCommand;
 import org.infinispan.iteration.impl.EntryResponseCommand;
 import org.infinispan.iteration.impl.EntryRetriever;
@@ -135,6 +137,7 @@ public class CommandsFactoryImpl implements CommandsFactory {
    private XSiteStateConsumer xSiteStateConsumer;
    private XSiteStateTransferManager xSiteStateTransferManager;
    private EntryRetriever entryRetriever;
+   private GroupManager groupManager;
 
    private Map<Byte, ModuleCommandInitializer> moduleCommandInitializers;
 
@@ -147,7 +150,7 @@ public class CommandsFactoryImpl implements CommandsFactory {
                                  LockManager lockManager, InternalEntryFactory entryFactory, MapReduceManager mapReduceManager, 
                                  StateTransferManager stm, BackupSender backupSender, CancellationService cancellationService,
                                  TimeService timeService, XSiteStateProvider xSiteStateProvider, XSiteStateConsumer xSiteStateConsumer,
-                                 XSiteStateTransferManager xSiteStateTransferManager, EntryRetriever entryRetriever) {
+                                 XSiteStateTransferManager xSiteStateTransferManager, EntryRetriever entryRetriever, GroupManager groupManager) {
       this.dataContainer = container;
       this.notifier = notifier;
       this.cache = cache;
@@ -171,6 +174,7 @@ public class CommandsFactoryImpl implements CommandsFactory {
       this.xSiteStateProvider = xSiteStateProvider;
       this.xSiteStateTransferManager = xSiteStateTransferManager;
       this.entryRetriever = entryRetriever;
+      this.groupManager = groupManager;
    }
 
    @Start(priority = 1)
@@ -433,6 +437,10 @@ public class CommandsFactoryImpl implements CommandsFactory {
             CompleteTransactionCommand ccc = (CompleteTransactionCommand)c;
             ccc.init(recoveryManager);
             break;
+         case GetKeyValueCommand.COMMAND_ID:
+            GetKeysInGroup gkg = (GetKeysInGroup)c;
+            gkg.init(groupManager);
+            break;
          case ApplyDeltaCommand.COMMAND_ID:
             break;
          case CreateCacheCommand.COMMAND_ID:
@@ -602,5 +610,11 @@ public class CommandsFactoryImpl implements CommandsFactory {
                                                                 Collection<Map.Entry<K, C>> values) {
       return new EntryResponseCommand(cache.getCacheManager().getAddress(), cacheName, identifier, completedSegments,
                                       inDoubtSegments, values);
+
+   }
+
+   @Override
+   public GetKeysInGroup buildGetKeysInGroupCommand(Object group) {
+      return new GetKeysInGroup(cacheName, group);
    }
 }

@@ -14,6 +14,7 @@ import org.infinispan.commands.read.ReduceCommand;
 import org.infinispan.commands.read.SizeCommand;
 import org.infinispan.commands.read.ValuesCommand;
 import org.infinispan.commands.remote.ClusteredGetCommand;
+import org.infinispan.commands.remote.GetKeysInGroup;
 import org.infinispan.commands.remote.MultipleRpcCommand;
 import org.infinispan.commands.remote.SingleRpcCommand;
 import org.infinispan.commands.remote.recovery.CompleteTransactionCommand;
@@ -379,6 +380,8 @@ public interface CommandsFactory {
     * @return created CancelCommandCommand
     */
    CancelCommand buildCancelCommandCommand(UUID commandUUID);
+
+   GetKeysInGroup buildGetKeysInGroupCommand(Object group);
 
    /**
     * Builds XSiteStateTransferControlCommand used to control the-cross site state transfer.
